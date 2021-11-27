@@ -3,9 +3,11 @@ defmodule TicTacToe do
   Documentation for `TicTacToe`.
   """
 
-  alias TicTacToe.Game
+  def run_win_demo() do
+    # TODO
+  end
 
-  def new_game() do
-    Game.new()
+  def run_tie_demo() do
+    # TODO
   end
 end
