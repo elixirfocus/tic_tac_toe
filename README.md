@@ -1,34 +1,14 @@
 # TicTacToe
 
-**TODO: Add description**
+The follow mix project contains a module `TicTacToe.Game` which was built as part of a [code jam for Philly Elixir](https://gist.github.com/zorn/129279df227ab984d09472f00160c932).
 
-[ ] Write iex sample that demonstrates a suscessful game.
-[ ] Add pretty print of board during inspect.
-[ ] Add tests
-[ ] Work on getting ex_doc making pretty docs.
-[ ] Add dialyzer
-[ ] Add credo
-[ ] Add gitHub actions for dialyzer, credo and tests
-[ ] Add github action for publication of docs
+Things you can do:
+
+* Run `mix test` to see validation of behavior.
+* Run `mix docs` to generate HTML documentation.
+* Run `mix credo --strict` to validate the correctness of the code.
+* Run `mix dialyzer` to confirm the manual typespecs.
 
 ## Other TicTacToe Demos
 
 * <https://github.com/idabmat/tic_tac_toe/tree/main/lib>
-
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `tic_tac_toe` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:tic_tac_toe, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/tic_tac_toe](https://hexdocs.pm/tic_tac_toe).
-
