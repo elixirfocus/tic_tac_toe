@@ -1,15 +1,17 @@
 defmodule TicTacToe.Game do
   @moduledoc """
-  `TicTacToe.Game` is a data structure that holds the state related to a
-  traditional 3x3 grid game of Tic-Tac-Toe.
+  A data structure that holds the state related to a traditional 3x3 grid game
+  of Tic-Tac-Toe.
   """
 
-  # INFO: I prefer to alias this here so later in the typespec and other pattern matching I can refer to the type / module `Game` instead of `__MODULE__`.
+  # INFO: I prefer to alias this here so later in the typespec and other pattern
+  # matching I can refer to the type / module `Game` instead of `__MODULE__`.
   alias TicTacToe.Game
 
-  @typedoc "The current value of a gird position."
+  @typedoc "A set of valid values for a single position within the board."
   @type position_value :: :empty | :x | :o
 
+  @typedoc "A set of known names for positions within the board."
   @type position_name ::
           :position_0
           | :position_1
@@ -21,14 +23,14 @@ defmodule TicTacToe.Game do
           | :position_7
           | :position_8
 
-  @typedoc "The next player allowed to make a turn or game over."
+  @typedoc "A set of values to represent the next player allowed to make a turn or game over."
   @type next_turn_value :: :x_player | :o_player | :game_over
 
-  # INFO: For scope/simplicity reasons I will only be storing the current state of the board, though I think it would be interesting to store the full historic move list and render the board from it. Perhaps in a second pass.
+  # INFO: For scope/simplicity reasons I will only be storing the current state
+  # of the board.  I do think it would be interesting to store the full historic
+  # move list and render the board from it but not going to do that now.
 
-  @typedoc """
-
-  """
+  @typedoc "A typespec for the `TicTacToe.Game` struct."
   @type t :: %Game{
           board: %{
             position_0: position_value,
@@ -47,6 +49,7 @@ defmodule TicTacToe.Game do
   @enforce_keys [:board, :next_turn]
   defstruct [:board, :next_turn]
 
+  @doc "Returns a new game with an empty board."
   @spec new :: TicTacToe.Game.t()
   def new() do
     %__MODULE__{
@@ -67,20 +70,21 @@ defmodule TicTacToe.Game do
 
   # INFO: We want to provide an explicit interface and not leak the
   # implementation. In a first pass, we might have historically expected users
-  # of this structure to peek into and find things like `next_turn`, but by
-  # having an interface would could potentially evolve the app to have more than
-  # 2 players or a different sized board.
+  # of this structure to peek into it and find things like `next_turn`, but by
+  # having an interface would can evolve the app to have more than 2 players or
+  # a different sized board.
 
   @doc """
-  Returns the next player turn of the given game, either
-  `:x_player` or `:o_player`.
+  Returns the next player turn for the given game.
 
-  Returns `:game_over` if there are no more player turns.
+  Returns either `:x_player` or `:o_player` for a game in-progress.
+
+  Returns `:game_over` if there are no more turns to be made.
 
   ## Examples
-    iex> alias TicTacToe.Game
-    iex> Game.next_turn(Game.new())
-    :x_player
+
+      iex> TicTacToe.Game.next_turn(TicTacToe.Game.new())
+      :x_player
 
   """
   @spec next_turn(Game.t()) :: next_turn_value
@@ -96,11 +100,12 @@ defmodule TicTacToe.Game do
   Returns `{:error, :invalid_position}` if the given position is unknown.
 
   ## Examples
-    iex> alias TicTacToe.Game
-    iex> Game.position_value(Game.new(), :position_3)
-    :empty
-    iex> Game.position_value(Game.new(), :position_foobar)
-    {:error, :invalid_position}
+
+      iex> TicTacToe.Game.position_value(TicTacToe.Game.new(), :position_3)
+      :empty
+
+      iex> TicTacToe.Game.position_value(TicTacToe.Game.new(), :position_foobar)
+      {:error, :invalid_position}
 
   """
   @spec position_value(Game.t(), position_name) :: position_value | {:error, :invalid_position}
@@ -108,6 +113,13 @@ defmodule TicTacToe.Game do
     Map.get(board, position, {:error, :invalid_position})
   end
 
+  @doc """
+  Returns an updated game, recording the given turn within the board.
+
+  If the turn was invalid or if the game was done, returns `{:error, :unplayable_turn}`.
+  """
+  @spec play_turn(Game.t(), position_name(), position_value()) ::
+          Game.t() | {:error, :unplayable_turn}
   def play_turn(%Game{} = game, position, value) do
     with :game_in_progress <- winner?(game),
          :empty <- position_value(game, position),
@@ -120,6 +132,16 @@ defmodule TicTacToe.Game do
     end
   end
 
+  @doc """
+  Returns the winner of a given game.
+
+  Returned values can be:
+
+  * `:game_in_progress`
+  * `:o_player`
+  * `:x_player`
+  * `:tie_game`
+  """
   @spec winner?(Game.t()) :: :game_in_progress | :o_player | :x_player | :tie_game
   def winner?(game) do
     cond do
@@ -135,6 +157,56 @@ defmodule TicTacToe.Game do
       true ->
         :game_in_progress
     end
+  end
+
+  @doc """
+  Outputs an ascii representation of the game state.
+
+  ## Sample:
+
+    ```text
+     O | O | X
+    ———————————
+     X | X | O
+    ———————————
+     O | X | X
+
+    Tie Game.
+    ```
+  """
+  @spec draw(Game.t()) :: Game.t()
+  def draw(game) do
+    ascii_board = """
+     #{game.board.position_0} | #{game.board.position_1} | #{game.board.position_2}
+    ———————————
+     #{game.board.position_3} | #{game.board.position_4} | #{game.board.position_5}
+    ———————————
+     #{game.board.position_6} | #{game.board.position_7} | #{game.board.position_8}
+    """
+
+    ascii_board
+    |> String.replace("x", "X")
+    |> String.replace("o", "O")
+    |> String.replace("empty", " ")
+    |> IO.write()
+
+    IO.write("\n")
+
+    case winner?(game) do
+      :game_in_progress ->
+        IO.puts("Game in progress.")
+
+      :o_player ->
+        IO.puts("Winner: O!")
+
+      :x_player ->
+        IO.puts("Winner: X!")
+
+      :tie_game ->
+        IO.puts("Tie Game.")
+    end
+
+    game
   end
 
   defp check_win(%Game{} = game, value) do

@@ -2,6 +2,10 @@ defmodule TicTacToe.GameTest do
   # INFO: I prefer to always be explicit about async with this `use` call.
   use ExUnit.Case, async: true
 
+  # Capturing IO during an async test on a larger project might be an issue, but
+  # has not been an issue here.
+  import ExUnit.CaptureIO
+
   doctest TicTacToe.Game
 
   alias TicTacToe.Game
@@ -94,7 +98,97 @@ defmodule TicTacToe.GameTest do
   end
 
   describe "draw/1" do
-    test "success: when given a game will output a visual representation of it to the console" do
+    test "success: when given a game (X winner) will output a visual representation of it to the console" do
+      output =
+        capture_io(fn ->
+          Game.new()
+          |> Game.play_turn(:position_0, :x)
+          |> Game.play_turn(:position_3, :o)
+          |> Game.play_turn(:position_1, :x)
+          |> Game.play_turn(:position_4, :o)
+          |> Game.play_turn(:position_2, :x)
+          |> Game.draw()
+        end)
+
+      assert output == """
+              X | X | X
+             ———————————
+              O | O |\s\s
+             ———————————
+                |   |\s\s
+
+             Winner: X!
+             """
+    end
+
+    test "success: when given a game (O winner) will output a visual representation of it to the console" do
+      output =
+        capture_io(fn ->
+          Game.new()
+          |> Game.play_turn(:position_0, :x)
+          |> Game.play_turn(:position_2, :o)
+          |> Game.play_turn(:position_1, :x)
+          |> Game.play_turn(:position_4, :o)
+          |> Game.play_turn(:position_3, :x)
+          |> Game.play_turn(:position_6, :o)
+          |> Game.draw()
+        end)
+
+      assert output == """
+              X | X | O
+             ———————————
+              X | O |\s\s
+             ———————————
+              O |   |\s\s
+
+             Winner: O!
+             """
+    end
+
+    test "success: when given a game (tie) will output a visual representation of it to the console" do
+      output =
+        capture_io(fn ->
+          Game.new()
+          |> Game.play_turn(:position_4, :x)
+          |> Game.play_turn(:position_0, :o)
+          |> Game.play_turn(:position_3, :x)
+          |> Game.play_turn(:position_5, :o)
+          |> Game.play_turn(:position_2, :x)
+          |> Game.play_turn(:position_6, :o)
+          |> Game.play_turn(:position_7, :x)
+          |> Game.play_turn(:position_1, :o)
+          |> Game.play_turn(:position_8, :x)
+          |> Game.draw()
+        end)
+
+      assert output == """
+              O | O | X
+             ———————————
+              X | X | O
+             ———————————
+              O | X | X
+
+             Tie Game.
+             """
+    end
+
+    test "success: when given a in-progress game will output a visual representation of it to the console" do
+      output =
+        capture_io(fn ->
+          Game.new()
+          |> Game.play_turn(:position_4, :x)
+          |> Game.draw()
+        end)
+
+      assert output == """
+                |   |\s\s
+             ———————————
+                | X |\s\s
+             ———————————
+                |   |\s\s
+
+             Game in progress.
+             """
     end
   end
 
