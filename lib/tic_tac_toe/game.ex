@@ -51,7 +51,7 @@ defmodule TicTacToe.Game do
 
   @doc "Returns a new game with an empty board."
   @spec new :: TicTacToe.Game.t()
-  def new() do
+  def new do
     %__MODULE__{
       board: %{
         position_0: :empty,

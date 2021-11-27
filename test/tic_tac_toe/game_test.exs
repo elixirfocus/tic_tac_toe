@@ -192,7 +192,7 @@ defmodule TicTacToe.GameTest do
     end
   end
 
-  defp tie_game() do
+  defp tie_game do
     # x | o | x
     # x | o | o
     # o | x | x

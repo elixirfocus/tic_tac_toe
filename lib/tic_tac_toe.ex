@@ -3,11 +3,11 @@ defmodule TicTacToe do
   Documentation for `TicTacToe`.
   """
 
-  def run_win_demo() do
+  def run_win_demo do
     # TODO
   end
 
-  def run_tie_demo() do
+  def run_tie_demo do
     # TODO
   end
 end
