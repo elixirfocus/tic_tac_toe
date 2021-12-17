@@ -11,4 +11,7 @@ Things you can do:
 
 ## Other TicTacToe Demos
 
+* <https://github.com/bgottlob/tic-tac-toe>
 * <https://github.com/idabmat/tic_tac_toe/tree/main/lib>
+* <https://github.com/fly-apps/tictac>
+* <https://duckduckgo.com/?q=elixir+tic+tac+toe>
